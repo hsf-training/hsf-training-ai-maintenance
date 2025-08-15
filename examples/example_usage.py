@@ -21,7 +21,7 @@ def main():
     load_env_file()
     
     # Example repository URL (replace with actual HSF training repo)
-    repo_url = "https://github.com/hsf-training/hsf-training-python-basics"
+    repo_url = "https://github.com/hsf-training/hsf-training-singularity-webpage"
     
     print(f"🔍 Analyzing HSF training repository: {repo_url}")
     
@@ -98,7 +98,7 @@ def analyze_single_file_example():
     
     load_env_file()
     
-    repo_url = "https://github.com/hsf-training/hsf-training-python-basics"
+    repo_url = "https://github.com/hsf-training/hsf-training-singularity-webpage"
     file_path = "_episodes/01-introduction.md"  # Example file path
     
     print(f"🔍 Analyzing single file: {file_path}")

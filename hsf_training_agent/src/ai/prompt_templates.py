@@ -11,7 +11,7 @@ class PromptTemplates:
                                   chapter_title: str, 
                                   file_path: str) -> str:
         """Generate primary analysis prompt for educational content."""
-        return f"""You are an expert in high-energy physics and computational science education with deep knowledge of current software tools, best practices, and recent developments in the field (2024-2025).
+        return f"""You are an expert in high-energy physics and computational science education with deep knowledge of current software tools, best practices, and recent developments in the field.
 
 TASK: Analyze the following training chapter content and identify specific areas that could benefit from updates based on recent developments, while preserving the core educational value and structure.
 
