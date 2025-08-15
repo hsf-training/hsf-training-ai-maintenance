@@ -1,12 +1,12 @@
 # AI agent for maintenance of HSF Training modules
 
-The goal of this project is to create an AI agent that can 
-assist in the maintenance and updating of HSF Training modules. 
+The goal of this project is to create an AI agent that can
+assist in the maintenance and updating of HSF Training modules.
 
 The agent will be able to ingest training modules, look at the content,
 and suggest updates or improvements based on the latest developments in the field.
 
-## Models 
+## Models
 
 The project must support multiple LLM providers. The default is Google Gemini as it is accessible for free (up to some limit).
 We plan to add support for other providers like OpenAI GPT, Anthropic Claude, and others in the future.
@@ -132,7 +132,7 @@ The agent can be configured via environment variables or `.env` file:
 The agent focuses on identifying:
 
 1. **Software Updates**: Outdated versions, libraries, frameworks
-2. **Best Practices**: Evolved methodologies and improved practices  
+2. **Best Practices**: Evolved methodologies and improved practices
 3. **Recent Developments**: New developments in HEP and computational science
 4. **Resource Updates**: Broken links, outdated documentation
 5. **Technical Accuracy**: Outdated or incorrect technical information
