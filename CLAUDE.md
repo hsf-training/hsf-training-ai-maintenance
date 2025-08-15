@@ -100,6 +100,9 @@ python hsf_training_agent/main.py analyze https://github.com/hsf-training/repo-n
 # Single file analysis
 python hsf_training_agent/main.py analyze-file https://github.com/hsf-training/repo-name path/to/file.md
 
+# Dry run mode - see what would be done without creating issues
+python hsf_training_agent/main.py analyze --dry-run https://github.com/hsf-training/repo-name
+
 # Test without creating issues
 python hsf_training_agent/main.py analyze --no-issues --output results.json <repo-url>
 ```

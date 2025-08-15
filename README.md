@@ -95,6 +95,14 @@ This will:
 python hsf_training_agent/main.py analyze --no-issues --no-summary https://github.com/hsf-training/hsf-training-example
 ```
 
+### Dry Run Mode - Preview What Would Be Done
+
+```bash
+python hsf_training_agent/main.py analyze --dry-run https://github.com/hsf-training/hsf-training-example
+```
+
+This shows exactly what issues would be created without actually creating them.
+
 ### Save Results to File
 
 ```bash

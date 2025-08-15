@@ -53,6 +53,8 @@ def cli(log_level: str, config: Optional[str]) -> None:
               help='Skip creating GitHub issues')
 @click.option('--no-summary', is_flag=True,
               help='Skip creating summary issue')
+@click.option('--dry-run', is_flag=True,
+              help='Show what actions would be taken without performing them')
 @click.option('--github-token', envvar='GITHUB_TOKEN',
               help='GitHub API token')
 @click.option('--gemini-key', envvar='GEMINI_API_KEY',
@@ -61,14 +63,16 @@ def analyze(repo_url: str,
            output: Optional[str],
            no_issues: bool,
            no_summary: bool,
+           dry_run: bool,
            github_token: Optional[str],
            gemini_key: Optional[str]) -> None:
     """Analyze a complete HSF training repository."""
     
+    mode_text = "[yellow]DRY RUN MODE[/yellow] - " if dry_run else ""
     console.print(Panel.fit(
         f"[bold blue]HSF Training Repository Analysis[/bold blue]\n"
-        f"Repository: [green]{repo_url}[/green]",
-        border_style="blue"
+        f"{mode_text}Repository: [green]{repo_url}[/green]",
+        border_style="yellow" if dry_run else "blue"
     ))
     
     try:
@@ -90,15 +94,15 @@ def analyze(repo_url: str,
             
             results = analyzer.analyze_repository(
                 repo_url=repo_url,
-                create_issues=not no_issues,
-                create_summary=not no_summary
+                create_issues=not no_issues and not dry_run,
+                create_summary=not no_summary and not dry_run
             )
             
             progress.update(task, description="Analysis complete!")
         
         # Display results
         if results.get('status') == 'completed':
-            _display_analysis_results(results)
+            _display_analysis_results(results, dry_run=dry_run)
         else:
             console.print(f"[bold red]Analysis failed:[/bold red] {results.get('error', 'Unknown error')}")
             sys.exit(1)
@@ -117,6 +121,8 @@ def analyze(repo_url: str,
 @click.argument('file_path')
 @click.option('--output', '-o', type=click.Path(),
               help='Output file for analysis results (JSON)')
+@click.option('--dry-run', is_flag=True,
+              help='Show analysis results without creating any issues')
 @click.option('--github-token', envvar='GITHUB_TOKEN',
               help='GitHub API token')
 @click.option('--gemini-key', envvar='GEMINI_API_KEY',
@@ -124,15 +130,17 @@ def analyze(repo_url: str,
 def analyze_file(repo_url: str,
                 file_path: str,
                 output: Optional[str],
+                dry_run: bool,
                 github_token: Optional[str],
                 gemini_key: Optional[str]) -> None:
     """Analyze a single file from an HSF training repository."""
     
+    mode_text = "[yellow]DRY RUN MODE[/yellow] - " if dry_run else ""
     console.print(Panel.fit(
         f"[bold blue]Single File Analysis[/bold blue]\n"
-        f"Repository: [green]{repo_url}[/green]\n"
+        f"{mode_text}Repository: [green]{repo_url}[/green]\n"
         f"File: [yellow]{file_path}[/yellow]",
-        border_style="blue"
+        border_style="yellow" if dry_run else "blue"
     ))
     
     try:
@@ -149,7 +157,7 @@ def analyze_file(repo_url: str,
         
         # Display results
         if result.get('status') == 'completed':
-            _display_file_analysis(result)
+            _display_file_analysis(result, dry_run=dry_run)
         else:
             console.print(f"[bold red]Analysis failed:[/bold red] {result.get('error', 'Unknown error')}")
             sys.exit(1)
@@ -207,7 +215,7 @@ def version() -> None:
         console.print("HSF Training AI Maintenance Agent v0.1.0")
 
 
-def _display_analysis_results(results: dict) -> None:
+def _display_analysis_results(results: dict, dry_run: bool = False) -> None:
     """Display analysis results in a formatted table."""
     summary = HSFTrainingAnalyzer(github_token="dummy", gemini_api_key="dummy").get_analysis_summary(results)
     
@@ -245,9 +253,65 @@ def _display_analysis_results(results: dict) -> None:
             priority_table.add_row(f"[{color}]{priority.title()}[/{color}]", str(count))
         
         console.print(priority_table)
+    
+    # Show dry-run specific information
+    if dry_run:
+        _display_dry_run_details(results)
 
 
-def _display_file_analysis(result: dict) -> None:
+def _display_dry_run_details(results: dict) -> None:
+    """Display detailed dry-run information showing what actions would be taken."""
+    ai_results = results.get('ai_analysis', {})
+    
+    console.print("\n" + "="*80)
+    console.print("[bold yellow]🔍 DRY RUN DETAILS - Actions that would be taken:[/bold yellow]")
+    console.print("="*80)
+    
+    files_with_suggestions = [(path, analysis) for path, analysis in ai_results.items() 
+                             if analysis and analysis.get('suggestions')]
+    
+    if not files_with_suggestions:
+        console.print("[green]✅ No actions would be taken - all content appears up to date![/green]")
+        return
+    
+    console.print(f"\n[bold]📋 GitHub Issues that would be created:[/bold]")
+    
+    for i, (file_path, analysis) in enumerate(files_with_suggestions, 1):
+        suggestions = analysis.get('suggestions', [])
+        if not suggestions:
+            continue
+            
+        console.print(f"\n[bold cyan]Issue #{i}: Content update suggestions for {file_path}[/bold cyan]")
+        console.print(f"[dim]Labels: enhancement, content-update, ai-generated[/dim]")
+        console.print(f"[bold]Suggestions ({len(suggestions)}):[/bold]")
+        
+        for j, suggestion in enumerate(suggestions[:3], 1):  # Show first 3 suggestions
+            priority_color = {
+                "high": "red",
+                "medium": "yellow", 
+                "low": "green"
+            }.get(suggestion.get('priority', 'medium').lower(), "white")
+            
+            console.print(f"  {j}. [bold]{suggestion.get('title', 'Untitled')}[/bold]")
+            console.print(f"     Type: {suggestion.get('type', 'unknown')}")
+            console.print(f"     Priority: [{priority_color}]{suggestion.get('priority', 'medium')}[/{priority_color}]")
+            console.print(f"     Description: {suggestion.get('description', 'No description')[:100]}...")
+        
+        if len(suggestions) > 3:
+            console.print(f"  ... and {len(suggestions) - 3} more suggestions")
+    
+    # Summary issue
+    if len(files_with_suggestions) > 1:
+        total_suggestions = sum(len(analysis.get('suggestions', [])) for _, analysis in files_with_suggestions)
+        console.print(f"\n[bold cyan]📊 Summary Issue that would be created:[/bold cyan]")
+        console.print(f"[dim]Labels: enhancement, maintenance, ai-generated, summary[/dim]")
+        console.print(f"Title: HSF Training Content Analysis Summary - {results.get('analysis_date', 'Today')}")
+        console.print(f"Content: Overview of {len(files_with_suggestions)} files with {total_suggestions} total suggestions")
+    
+    console.print("\n[yellow]💡 To actually create these issues, run the command without --dry-run[/yellow]")
+
+
+def _display_file_analysis(result: dict, dry_run: bool = False) -> None:
     """Display single file analysis results."""
     file_path = result.get('file_path', 'Unknown')
     analysis = result.get('ai_analysis', {})
@@ -280,6 +344,11 @@ def _display_file_analysis(result: dict) -> None:
             console.print("[green]No suggestions found - content appears up to date![/green]")
     else:
         console.print("[yellow]Analysis completed but no structured results available[/yellow]")
+    
+    # Add dry-run specific messaging
+    if dry_run and analysis and analysis.get('suggestions'):
+        console.print("\n[yellow]🔍 DRY RUN MODE: These suggestions would normally be used to create GitHub issues[/yellow]")
+        console.print("[yellow]💡 To create actual issues, run the command without --dry-run[/yellow]")
 
 
 def _save_results(results: dict, output_path: str) -> None:
