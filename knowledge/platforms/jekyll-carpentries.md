@@ -109,6 +109,9 @@ before changing the `Gemfile`.
   `repository: <USERNAME>/<PROJECT>`. The theme gets the repo from Pages
   metadata when deployed, so it renders fine on Pages but may produce odd links
   locally.
+- `hsf-training-theme`'s navbar uses `{% link LICENSE.md %}` and
+  `{% link CODE_OF_CONDUCT.md %}`. Jekyll's `link` tag fails the build if the
+  target is missing, so both files must stay, with their front matter.
 - Before removing vendored theme files, check `_includes/` for lesson-specific
   files. `all_figures.html` and `figure.html` must be kept if present, and
   custom includes should be kept or moved to `files/`. Rebuild and compare

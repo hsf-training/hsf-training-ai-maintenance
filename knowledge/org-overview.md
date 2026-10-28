@@ -1,6 +1,6 @@
 # The `hsf-training` organization
 
-The [HSF Training](https://hepsoftwarefoundation.org/workinggroups/training.html)
+The [HSF Training](https://hepsoftwarefoundation.org/activities/training.html)
 group of the HEP Software Foundation trains researchers in High Energy Physics to
 write high-quality, sustainable software. The
 [`hsf-training`](https://github.com/hsf-training) GitHub organization hosts its
@@ -15,6 +15,11 @@ relying on them.
   (source: [`training-center`](https://github.com/hsf-training/training-center)).
   The old curriculum page on the HSF website redirects there.
 - Upcoming events: <https://hepsoftwarefoundation.org/Schools/events.html>
+- Past and upcoming training events: `_data/training-schools.yml` in
+  [`HSF/hsf.github.io`](https://github.com/HSF/hsf.github.io) (title, dates,
+  Indico link, `HSF` tag for events organized or supported by HSF). It doesn't
+  record which modules were taught. For that, check the event's Indico
+  timetable.
 - Mailing list: `hsf-training-wg@googlegroups.com`
 - Org profile shown on GitHub: [`.github/profile/README.md`](https://github.com/hsf-training/.github/blob/main/profile/README.md)
 
@@ -39,9 +44,9 @@ or from `git log`/`gh pr list --state merged` before asking for a review.
 | Other | `participation-analysis`, `PyHEP-resources`, `python-lesson`, `cpluspluscourse` | Check each repo's README. |
 | Archived | `maintenance`, `carpentry-cookiecutter`, `hsf-training-uproot-webpage`, ... | Read-only. Don't open issues or PRs. They may still be useful as reference. |
 
-Use `gh repo list hsf-training --no-archived` for the current list.
-`knowledge/repos.yaml` will hold the curated inventory once it exists (phase 2
-of `PLAN.md`).
+The curated inventory is [`repos.toml`](repos.toml): kind, platform, default
+branch, Pages setup and Training Center ids for every repo. Refresh it with the
+`repo-inventory` skill.
 
 External modules listed in the Training Center (e.g. the ROOT student course,
 UnROOT) live in other organizations and are **out of scope**.

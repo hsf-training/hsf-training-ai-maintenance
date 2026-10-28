@@ -1,6 +1,6 @@
 # Agent-assisted maintenance of HSF Training modules
 
-This repository helps maintainers of the [HSF Training](https://hepsoftwarefoundation.org/workinggroups/training.html)
+This repository helps maintainers of the [HSF Training](https://hepsoftwarefoundation.org/activities/training.html)
 modules in the [`hsf-training`](https://github.com/hsf-training) organization
 use **their own coding agent** (Claude Code, Codex, Gemini CLI, Copilot,
 Cursor, ...) for maintenance work. That includes keeping lessons building,
@@ -12,9 +12,13 @@ There are no API keys to configure and nothing to install. The repo contains:
 - **Knowledge** ([`knowledge/`](knowledge/)): how the organization is set up,
   how each kind of lesson is built and deployed, and the rules for
   agent-assisted contributions.
-- **Skills** (`skills/`, coming soon): step-by-step procedures for
-  recurring maintenance tasks, in the [Agent Skills](https://agentskills.io)
-  format.
+- **Skills** ([`skills/`](skills/)): step-by-step procedures for recurring
+  maintenance tasks, in the [Agent Skills](https://agentskills.io) format.
+  See the list in [`AGENTS.md`](AGENTS.md#skills).
+- **Templates** ([`templates/`](templates/TEMPLATES.md)): shared files such as
+  the pre-commit config, bot configs and licenses.
+- **Scripts** ([`scripts/`](scripts/)): small standard-library Python helpers
+  for the inventory, audits and the local workspace.
 
 It replaces the archived [`maintenance`](https://github.com/hsf-training/maintenance)
 scripts and an earlier Gemini-based tool that lived in this repo. See
@@ -37,7 +41,7 @@ scripts and an earlier Gemini-based tool that lived in this repo. See
 
 3. Ask for what you need, for example:
    - "Check whether `hsf-training-docker` still builds and fix what's broken."
-   - "Which lessons still vendor the Carpentries theme files?"
+   - "Audit the org and tell me what's broken."
    - "Look for outdated package versions in `hsf-training-scikit-hep-webpage`."
 
 The agent works in local clones under `../hsf-workspace/` and asks before doing

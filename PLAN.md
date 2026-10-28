@@ -107,7 +107,7 @@ quickly. The `repo-inventory` and `repo-audit` skills (below) will regenerate it
 │   ├── org-overview.md       # org structure, infra repos, people/contacts, training-center, .github org files
 │   ├── contribution-policy.md# AI-disclosure, review, branching, PR etiquette for agent-made changes
 │   ├── standards.md          # the target state of a repo (files, CI, settings, README sections)
-│   ├── repos.yaml            # inventory: repo → kind, platform, deploy, status, notes
+│   ├── repos.toml            # inventory: repo → kind, platform, deploy, status, notes
 │   └── platforms/
 │       ├── README.md         # how to identify a repo's platform
 │       ├── jekyll-carpentries.md
@@ -122,16 +122,14 @@ quickly. The `repo-inventory` and `repo-audit` skills (below) will regenerate it
 │   ├── .github/stale.yml     # probot-stale, pinging @hsf-training/training-conveners
 │   ├── .github/config.yml    # welcome bot, pinging @hsf-training/training-conveners
 │   ├── .github/workflows/... # e.g. link check
-│   ├── codespell.txt
 │   ├── LICENSE               # default for material: CC BY 4.0
 │   ├── LICENSE-CODE          # default for code in new modules: BSD-3-Clause
 │   ├── LICENSE-CODE-MIT      # for existing lessons that already use MIT (copied as LICENSE-CODE)
 │   ├── CONTRIBUTING.md
 │   └── README.md             # README skeleton with standard sections
+├── scripts/                  # stdlib-only helpers shared by the skills (inventory, audit, workspace)
 ├── skills/
-│   └── <skill-name>/
-│       ├── SKILL.md
-│       └── scripts/          # optional stdlib-only helpers
+│   └── <skill-name>/SKILL.md
 ├── .claude/skills -> ../skills   # symlinks so harnesses auto-discover skills
 └── .agents/skills -> ../skills
 ```
@@ -159,7 +157,7 @@ optional, and when to drop or change them. Tailored differences from the
 template are expected and aren't flagged as drift by `repo-audit`. The audit
 only flags missing required parts and outdated versions.
 
-`repos.yaml` mixes fields derived from `gh` (archived, default branch, pages URL)
+`repos.toml` mixes fields derived from `gh` (archived, default branch, pages URL)
 with hand-curated ones (kind, platform, companion repo, notes). The
 `repo-inventory` skill refreshes the derived fields and flags new repos, but
 keeps the curated ones. This replaces `repository_list/repositories.csv`.
@@ -180,7 +178,7 @@ which old script or issue it replaces or resolves.
 
 | Skill | What it does |
 |---|---|
-| `repo-inventory` | Lists org repos via `gh`, detects platform from marker files (`_config.yml`+`remote_theme`, `myst.yml`, `conf.py`, `hugo.toml`, ...), updates `knowledge/repos.yaml`, and cross-checks the `hsf-training` entries in `training-center/data/data.yaml` (modules listed there but archived, active lessons missing from it). *Replaces `repository_list/`.* |
+| `repo-inventory` | Lists org repos via `gh`, detects platform from marker files (`_config.yml`+`remote_theme`, `myst.yml`, `conf.py`, `hugo.toml`, ...), updates `knowledge/repos.toml`, and cross-checks the `hsf-training` entries in `training-center/data/data.yaml` (modules listed there but archived, active lessons missing from it). *Replaces `repository_list/`.* |
 | `workspace-setup` | Clones or updates a chosen set of repos into a local workspace (e.g. `../hsf-workspace/`), on fresh branches. *Replaces the `gh repo clone` loop + `gita` notes.* |
 | `repo-audit` | Checks one or all repos against `standards.md`. A script gathers facts (files present, workflow list, protection, repo settings, stale branches, pre-commit revs, `~~~` fences, license detection), and the agent writes a prioritized report: a table per repo plus suggested campaigns. Read-only. |
 
@@ -188,7 +186,7 @@ which old script or issue it replaces or resolves.
 
 | Skill | What it does |
 |---|---|
-| `bulk-change` | The campaign procedure that replaces `multi-gitter`. Steps: (1) define the change and target set from `repos.yaml`/audit, (2) open a tracking issue in this repo, (3) apply to one repo locally, build it, show the diff, and open a pilot PR, (4) once the pilot is approved, apply to the rest, building each locally, adapting per repo where it isn't mechanical, (5) open PRs with a consistent branch name/title/body, (6) update the tracking issue checklist with PR links. *Replaces the multi-gitter README, `helpers/open_prs_browser.py` (PR links live in the tracking issue) and `helpers/switch_out_gitconfig.py` (not needed with `gh`).* |
+| `bulk-change` | The campaign procedure that replaces `multi-gitter`. Steps: (1) define the change and target set from `repos.toml`/audit, (2) open a tracking issue in this repo, (3) apply to one repo locally, build it, show the diff, and open a pilot PR, (4) once the pilot is approved, apply to the rest, building each locally, adapting per repo where it isn't mechanical, (5) open PRs with a consistent branch name/title/body, (6) update the tracking issue checklist with PR links. *Replaces the multi-gitter README, `helpers/open_prs_browser.py` (PR links live in the tracking issue) and `helpers/switch_out_gitconfig.py` (not needed with `gh`).* |
 | `sync-shared-files` | Reconciles a repo's copies of shared files with `templates/`, tailoring each template to the repo (see above) rather than copying it. It drops parts that don't apply, keeps intentional local customizations (extra hooks, extra codespell words), and explains each difference from the template in the PR body. It also strips the old "CENTRALLY MAINTAINED FILE" headers, since synced files no longer carry headers. *Replaces `add-common-files/` and resolves the partial-sharing idea of old #14/#15 without marker gymnastics.* |
 | `legacy-cleanup` | Removes known cruft: vendored Jekyll theme files when `remote_theme` is set, `.travis.yml`, per-repo copies of org-wide `.github` files, duplicate code-of-conduct files, `_config.yml` placeholders, and missing keys like `hsf_site`. Verifies the site still builds. *Replaces `move-to-theme/`, `remove-organization-wide-files/`, `add-missing-config-key/`, `fix-link-license/`.* |
 | `repo-settings` | Reads and (with confirmation and admin rights) applies repo settings: delete-branch-on-merge, topics, description, homepage, and Pages source. It can also delete merged/stale branches after listing them. Branch protection is deliberately not managed (see #13 below). *Resolves old #11.* |
@@ -242,7 +240,7 @@ with `bulk-change`.
     change.
   - Repos with a deliberate different license (e.g. cpluspluscourse
     Apache-2.0, python-lesson GPL-3.0) are left alone, and the license is
-    recorded in `repos.yaml`.
+    recorded in `repos.toml`.
 
 ### #19 Remove/change Carpentry Makefiles
 
@@ -316,36 +314,57 @@ See [Decisions](#decisions). They get written into `standards.md` and
   `end-of-file-fixer` and `trailing-whitespace` are limited to `_episodes/`
   paths that don't exist here.
 
-### Phase 2: inventory and audit
+All of the implementation happens in **one PR** to this repo. Nothing is
+changed in other repos until that PR has been reviewed and merged. Read-only
+access (inventory, audit, cloning to build locally) is fine while developing
+and testing the scripts and skills.
 
-- Implement `repo-inventory`, generate `repos.yaml`, and curate it by hand once.
-- Write `standards.md` and `templates/`.
-- Implement `workspace-setup` and `repo-audit`, run the first org-wide audit,
-  and post it as a tracking issue. That issue becomes the backlog for phase 3.
+### Phase 2: inventory, standards and audit (done)
 
-### Phase 3: campaigns
+- Implement `repo-inventory` (`scripts/inventory.py`), generate
+  `knowledge/repos.toml`, and curate it by hand once. The inventory is TOML,
+  not YAML, so the scripts can read it with the standard library (`tomllib`).
+- Write `knowledge/standards.md` and `templates/`.
+- Implement `workspace-setup` (`scripts/workspace.py`) and `repo-audit`
+  (`scripts/audit.py`). Run the audit locally to test it, but don't post the
+  results anywhere yet.
+- Add the `.claude/skills` and `.agents/skills` symlinks.
 
-- Implement `bulk-change`, `sync-shared-files`, `legacy-cleanup`, `repo-settings`
-  and `build-and-preview`.
-- Run campaigns in roughly this order (lowest risk first): org-wide duplicates
-  → shared-file sync (bot configs with the team mention, headers dropped,
-  dependabot, pre-commit) → vendored theme files and Makefiles (#19) → licenses
-  (#21) → repo settings and stale branches (#11).
-- Close the old #13 by linking to the decision recorded in `standards.md`.
+### Phase 3: skills for changing repos (done)
 
-### Phase 4: content
+- Implement `bulk-change`, `sync-shared-files`, `legacy-cleanup`,
+  `repo-settings` and `build-and-preview`.
 
-- Implement `content-review` and `update-dependencies`. Pilot them on one
-  actively taught lesson, then turn what we learn into the skills before
-  running them more widely.
-- Implement `org-triage`.
+### Phase 4: content skills (done)
 
-### Phase 5: later
+- Implement `content-review`, `update-dependencies` and `org-triage`.
 
-- `past-events` (#12), `write-repo-agents-md`, `migrate-platform`.
-- Optional: package the skills as a Claude Code plugin / marketplace entry, or
-  similar for other harnesses. Scheduled unattended runs are out of scope
-  because they bring back API keys and remove the human reviewer.
+### Phase 5: remaining skills (done)
+
+- Implement `past-events` (#12), `write-repo-agents-md` and `migrate-platform`.
+
+### Phase 6: review and merge
+
+- Open the PR and get it reviewed. Tweak the skills from the review feedback.
+
+### After merging: rollout
+
+Start using the skills, and adjust them as real use shows what's missing.
+
+1. Run `repo-audit` on the whole org and post the result as a tracking issue
+   here. That issue becomes the backlog.
+2. Pilot each skill on one repo before using it widely.
+3. Run campaigns in roughly this order (lowest risk first): org-wide duplicates
+   → shared-file sync (bot configs with the team mention, headers dropped,
+   dependabot, pre-commit) → vendored theme files and Makefiles (#19) →
+   licenses (#21) → repo settings and stale branches (#11).
+4. Pilot `content-review` and `update-dependencies` on one actively taught
+   lesson, and feed what we learn back into the skills.
+5. Close the old #13 by linking to the decision recorded in `standards.md`.
+
+Optional later: package the skills as a Claude Code plugin / marketplace entry,
+or similar for other harnesses. Scheduled unattended runs are out of scope
+because they bring back API keys and remove the human reviewer.
 
 ## Decisions
 

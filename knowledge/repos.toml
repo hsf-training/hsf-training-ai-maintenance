@@ -1,0 +1,501 @@
+# Inventory of the hsf-training repositories.
+#
+# Regenerate with `python3 scripts/inventory.py` (see skills/repo-inventory).
+#
+# Curated fields, edited by hand and kept by the script:
+#   kind          one of: lesson, companion, infra, fork, other
+#   companion_of  for companion repos, the lesson repo they belong to
+#   notes         anything an agent should know before touching the repo
+#
+# Derived fields, overwritten by the script:
+#   archived, fork_of, default_branch, description
+#   platform         see knowledge/platforms/README.md
+#   pages            GitHub Pages build type ("legacy:<branch>", "workflow" or "")
+#   site             GitHub Pages URL
+#   training_center  ids of the modules in training-center/data/data.yaml
+#                    whose repository is this repo
+
+[[repo]]
+name = ".github"
+kind = "infra"
+notes = "Org-wide community health files (code of conduct, issue/PR templates) and the org profile. Workflows here only apply to this repo."
+archived = false
+default_branch = "main"
+platform = "none"
+description = "Organization wide default settings"
+
+[[repo]]
+name = "analysis-essentials"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "master"
+platform = "sphinx"
+pages = "legacy:gh-pages"
+site = "https://hsf-training.github.io/analysis-essentials/"
+training_center = ["lhcb-analysis-essentials"]
+description = "Tutorials on computing essentials for HEP"
+
+[[repo]]
+name = "array-oriented-programming"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "main"
+platform = "jupyter-book-1"
+pages = "workflow"
+site = "https://hsf-training.github.io/array-oriented-programming/"
+training_center = ["array"]
+description = "How to analyze particle physics data using arrays in Python"
+
+[[repo]]
+name = "array-oriented-puzzles"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "main"
+platform = "jupyterlite"
+pages = "workflow"
+site = "https://hsf-training.github.io/array-oriented-puzzles/"
+training_center = ["array-puzzles"]
+description = "NumPy and Awkward Array puzzles"
+
+[[repo]]
+name = "cookiecutter-jupyter-book"
+kind = "infra"
+notes = "Template for new modules. Keep it in line with knowledge/standards.md and templates/."
+archived = false
+default_branch = "main"
+platform = "jupyter-book-1"
+pages = "workflow"
+site = "https://hsf-training.github.io/cookiecutter-jupyter-book/"
+description = "Cookiecutter for initializing an HSF Training module in Jupyter Book style"
+
+[[repo]]
+name = "cpluspluscourse"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "master"
+platform = "latex"
+training_center = ["hepcpp"]
+description = "HSF C++ Course"
+
+[[repo]]
+name = "deep-learning-intro-for-hep"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "main"
+platform = "jupyter-book-1"
+pages = "workflow"
+site = "https://hsf-training.github.io/deep-learning-intro-for-hep/"
+training_center = ["ml-hep"]
+description = "Introduction to deep learning for particle physicists"
+
+[[repo]]
+name = "git-novice"
+kind = "fork"
+notes = "Carpentries Workbench lesson. Workflows and Workbench files are owned upstream, so sync from upstream rather than editing them."
+archived = false
+fork_of = "mambelli/git-novice"
+default_branch = "main"
+platform = "sandpaper"
+pages = "legacy:gh-pages"
+site = "https://hsf-training.github.io/git-novice/"
+training_center = ["git"]
+description = "Version Control with Git"
+
+[[repo]]
+name = "hsf-training-advanced-cpp-bits-webpage"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "gh-pages"
+platform = "jekyll-carpentries"
+pages = "legacy:gh-pages"
+site = "https://hsf-training.github.io/hsf-training-advanced-cpp-bits-webpage/"
+
+[[repo]]
+name = "hsf-training-advanced-git-webpage"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "gh-pages"
+platform = "jekyll-carpentries"
+pages = "legacy:gh-pages"
+site = "https://hsf-training.github.io/hsf-training-advanced-git-webpage/"
+
+[[repo]]
+name = "hsf-training-ai-maintenance"
+kind = "infra"
+notes = "This repository."
+archived = false
+default_branch = "main"
+platform = "none"
+description = "Agentic AI tools for maintenance of HSF Training repositories "
+
+[[repo]]
+name = "hsf-training-cicd"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "gh-pages"
+platform = "jekyll-carpentries"
+pages = "legacy:gh-pages"
+site = "https://hsf-training.github.io/hsf-training-cicd/"
+training_center = ["cicd"]
+description = "Continuuous integration and deployment with gitlab"
+
+[[repo]]
+name = "hsf-training-cicd-github"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "gh-pages"
+platform = "hugo"
+pages = "legacy:gh-pages"
+site = "https://hsf-training.github.io/hsf-training-cicd-github/"
+training_center = ["cicdgithub"]
+description = "An introduction to continuous integration (CI) and continuous deployment (CD) using GitHub Actions"
+
+[[repo]]
+name = "hsf-training-cmake-webpage"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "gh-pages"
+platform = "jekyll-carpentries"
+pages = "legacy:gh-pages"
+site = "https://hsf-training.github.io/hsf-training-cmake-webpage/"
+training_center = ["cmake"]
+description = "Learn to use CMake"
+
+[[repo]]
+name = "hsf-training-cms-analysis"
+kind = "companion"
+companion_of = "hsf-training-cms-analysis-webpage"
+notes = ""
+archived = false
+default_branch = "master"
+platform = "none"
+description = "Higgs to two tau lepton analysis based on NanoAOD-like samples from the CERN Open Data portal. Used as a simple payload in our hsf-training-cicd module. "
+
+[[repo]]
+name = "hsf-training-cms-analysis-webpage"
+kind = "lesson"
+notes = "Lesson text refers to code in hsf-training-cms-analysis."
+archived = false
+default_branch = "gh-pages"
+platform = "jekyll-carpentries"
+pages = "legacy:gh-pages"
+site = "https://hsf-training.github.io/hsf-training-cms-analysis-webpage/"
+training_center = ["simpleanalysis"]
+description = "Webpage for github.com/hsf-training/hsf-training-cms-analysis"
+
+[[repo]]
+name = "hsf-training-databases-basics"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "main"
+platform = "myst-jupyter-book-2"
+pages = "workflow"
+site = "https://hsf-training.github.io/hsf-training-databases-basics/"
+
+[[repo]]
+name = "hsf-training-docker"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "gh-pages"
+platform = "jekyll-carpentries"
+pages = "legacy:gh-pages"
+site = "https://hsf-training.github.io/hsf-training-docker/"
+training_center = ["docker"]
+description = "Introduction to docker lesson"
+
+[[repo]]
+name = "hsf-training-generators-webpage"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "master"
+platform = "jekyll-carpentries"
+pages = "legacy:master"
+site = "https://hsf-training.github.io/hsf-training-generators-webpage/"
+
+[[repo]]
+name = "hsf-training-llms-for-hep"
+kind = "lesson"
+notes = "Has an AGENTS.md with detailed Jupyter Book 2 notes."
+archived = false
+default_branch = "main"
+platform = "myst-jupyter-book-2"
+pages = "workflow"
+site = "https://hsf-training.github.io/hsf-training-llms-for-hep/"
+description = "An introduction to the usage of Large Language Models for HEP and Nuclear Physics"
+
+[[repo]]
+name = "hsf-training-matplotlib"
+kind = "lesson"
+notes = "Notebooks used in the lesson live in hsf_matplotlib_notebooks."
+archived = false
+default_branch = "gh-pages"
+platform = "jekyll-carpentries"
+pages = "legacy:gh-pages"
+site = "https://hsf-training.github.io/hsf-training-matplotlib/"
+training_center = ["matplotlib"]
+description = "Create commonly used plots in HEP with matplotlib and mplhep"
+
+[[repo]]
+name = "hsf-training-ml-gpu-webpage"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "gh-pages"
+platform = "jekyll-carpentries"
+pages = "legacy:gh-pages"
+site = "https://hsf-training.github.io/hsf-training-ml-gpu-webpage/"
+training_center = ["gpuml"]
+description = "Run your ML on a GPU! Click the link below to view the training website!"
+
+[[repo]]
+name = "hsf-training-ml-webpage"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "gh-pages"
+platform = "jekyll-carpentries"
+pages = "legacy:gh-pages"
+site = "https://hsf-training.github.io/hsf-training-ml-webpage/"
+description = "Introduction to machine learning"
+
+[[repo]]
+name = "hsf-training-reana-webpage"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "gh-pages"
+platform = "jekyll-carpentries"
+pages = "legacy:gh-pages"
+site = "https://hsf-training.github.io/hsf-training-reana-webpage/"
+training_center = ["reana"]
+description = "Let's make your analysis reproducible with REANA"
+
+[[repo]]
+name = "hsf-training-scikit-hep-webpage"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "main"
+platform = "myst-jupyter-book-2"
+pages = "workflow"
+site = "https://hsf-training.github.io/hsf-training-scikit-hep-webpage/"
+training_center = ["scikithep"]
+
+[[repo]]
+name = "hsf-training-scikit-hep-webpage-es"
+kind = "lesson"
+notes = "Spanish translation of hsf-training-scikit-hep-webpage. Content changes there may need translating here."
+archived = false
+default_branch = "main"
+platform = "myst-jupyter-book-2"
+pages = "workflow"
+site = "https://hsf-training.github.io/hsf-training-scikit-hep-webpage-es/"
+training_center = ["scikithep-es"]
+description = "Tutorial de Scikit-HEP"
+
+[[repo]]
+name = "hsf-training-singularity-webpage"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "gh-pages"
+platform = "jekyll-carpentries"
+pages = "legacy:gh-pages"
+site = "https://hsf-training.github.io/hsf-training-singularity-webpage/"
+training_center = ["singularity"]
+
+[[repo]]
+name = "hsf-training-ssh-webpage"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "gh-pages"
+platform = "jupyter-book-1"
+pages = "workflow"
+site = "https://hsf-training.github.io/hsf-training-ssh-webpage/"
+training_center = ["ssh"]
+
+[[repo]]
+name = "hsf-training-theme"
+kind = "infra"
+notes = "Remote Jekyll theme used by the Jekyll lessons. Changes reach a lesson on its next Pages build."
+archived = false
+default_branch = "main"
+platform = "none"
+description = "Jekyll theme for the lessons of HSF Training"
+
+[[repo]]
+name = "hsf-training-unix-shell"
+kind = "lesson"
+notes = ""
+archived = false
+default_branch = "main"
+platform = "jupyter-book-1"
+pages = "workflow"
+site = "https://hsf-training.github.io/hsf-training-unix-shell/"
+training_center = ["unix"]
+description = "HSF Unix Shell Lessons"
+
+[[repo]]
+name = "hsf_matplotlib_notebooks"
+kind = "companion"
+companion_of = "hsf-training-matplotlib"
+notes = ""
+archived = false
+default_branch = "main"
+platform = "none"
+description = "Jupyter notebooks for the HSF matplotlib tutorial"
+
+[[repo]]
+name = "learner-certificates"
+kind = "fork"
+notes = ""
+archived = false
+fork_of = "carpentries/learner-certificates"
+default_branch = "main"
+platform = "none"
+description = "Template and script to generate workshop learner certificates"
+
+[[repo]]
+name = "participation-analysis"
+kind = "other"
+notes = "Analysis of training participation data, not a lesson."
+archived = false
+default_branch = "main"
+platform = "none"
+description = "Analyze participation in workshops, information from surveys and the number of educators"
+
+[[repo]]
+name = "PyHEP-resources"
+kind = "other"
+notes = "Curated list of PyHEP resources."
+archived = false
+default_branch = "master"
+platform = "none"
+description = "Python libraries of interest to particle physicists.  This is meant for educational purposes."
+
+[[repo]]
+name = "python-lesson"
+kind = "other"
+notes = "Helper functions for the HSF advanced Python lesson."
+archived = false
+default_branch = "master"
+platform = "none"
+description = "Helper Functions for HSF Advanced Python Lesson"
+
+[[repo]]
+name = "training-center"
+kind = "infra"
+notes = "Catalog website. data/data.yaml must be updated when a lesson is added, renamed or archived."
+archived = false
+default_branch = "main"
+platform = "astro"
+pages = "workflow"
+site = "https://hsf-training.org/"
+description = "A new training center!"
+
+[[repo]]
+name = "analyze-state-of-training-survey"
+archived = true
+
+[[repo]]
+name = "carpentry-cookiecutter"
+archived = true
+
+[[repo]]
+name = "chep23-proceeding-community"
+archived = true
+
+[[repo]]
+name = "chep23-proceeding-sustainability"
+archived = true
+
+[[repo]]
+name = "csbs-paper"
+archived = true
+
+[[repo]]
+name = "hsf-k12-python-for-stem-teachers"
+archived = true
+
+[[repo]]
+name = "hsf-styles"
+archived = true
+
+[[repo]]
+name = "hsf-training-alpaka-webpage"
+archived = true
+
+[[repo]]
+name = "hsf-training-central-entry-point"
+archived = true
+
+[[repo]]
+name = "hsf-training-cicd-basics-webpage"
+archived = true
+
+[[repo]]
+name = "hsf-training-cms-analysis-snapshot"
+archived = true
+
+[[repo]]
+name = "hsf-training-cms-analysis-snapshot-stats"
+archived = true
+
+[[repo]]
+name = "hsf-training-cpp-webpage"
+archived = true
+
+[[repo]]
+name = "hsf-training-intermediate-cpp"
+archived = true
+
+[[repo]]
+name = "hsf-training-minimal-github-actions-docker-build-push"
+archived = true
+
+[[repo]]
+name = "hsf-training-minimal-github-actions-pytest"
+archived = true
+
+[[repo]]
+name = "hsf-training-pytest-webpage"
+archived = true
+
+[[repo]]
+name = "hsf-training-spack-webpage"
+archived = true
+
+[[repo]]
+name = "hsf-training-uproot-webpage"
+archived = true
+training_center = ["uproot"]
+
+[[repo]]
+name = "maintenance"
+archived = true
+
+[[repo]]
+name = "organization"
+archived = true
+
+[[repo]]
+name = "Python-for-STEM"
+archived = true
+
+[[repo]]
+name = "repository-maintenance-test"
+archived = true
