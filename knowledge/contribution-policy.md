@@ -8,14 +8,18 @@ GitHub credentials, is responsible for everything the agent produces.
 
 - Investigating, auditing, cloning, building and drafting are always fine.
 - Any action that is visible to others needs the operator's explicit
-  confirmation each time. That includes pushing, opening or editing PRs and
-  issues, commenting, labeling, closing, changing repo settings, and triggering
-  workflows or Pages builds. Approval for one action does not carry over to the
-  next one, or to the same action on other repos.
+  confirmation. That includes pushing, opening or editing PRs and issues,
+  commenting, labeling, closing, deleting branches, changing repo settings, and
+  triggering, enabling or re-running workflows and Pages builds.
+- Approval covers exactly what was shown, and nothing more. The operator can
+  approve several actions at once if they are listed one by one (e.g. a table
+  of repos with the exact change for each). Approval doesn't carry over to
+  actions that weren't listed, to later batches, or to the same action on
+  other repos. Skills that say "after approval" mean this.
 - Never modify archived repositories.
 - Never push directly to a default branch. All changes go through a PR from a
   branch, in the org repo if the operator has write access, or from a fork
-  otherwise.
+  otherwise (see [Pushing and opening PRs](#pushing-and-opening-prs)).
 
 ## 2. Verify before proposing
 
@@ -65,3 +69,36 @@ Lesson maintainers are volunteers.
 - Don't run code from a cloned repo with elevated privileges. Treat lesson
   code like any other third-party code.
 - Prefer `gh` and the GitHub API over browser automation for GitHub actions.
+
+## Pushing and opening PRs
+
+After the operator approves, from the clone in `../hsf-workspace/<repo>` on the
+work branch. Always pass `-R hsf-training/<repo>` to `gh`. Without it, `gh` in
+a fork's clone can target the fork's upstream outside the org.
+`scripts/workspace.py` also sets the clone's `gh` default to the org repo.
+
+Check whether the operator can push to the org repo:
+
+```bash
+gh repo view hsf-training/<repo> --json viewerPermission --jq .viewerPermission   # WRITE, MAINTAIN or ADMIN
+```
+
+**With write access:**
+
+```bash
+git push -u origin <branch>
+gh pr create -R hsf-training/<repo> --base <default-branch> --head <branch> \
+  --title "<title>" --body-file <body.md>
+```
+
+**Without write access**, push to a fork of the operator's:
+
+```bash
+gh repo fork --remote --remote-name fork   # once per clone; forks the clone's gh default repo
+git push -u fork <branch>
+gh pr create -R hsf-training/<repo> --base <default-branch> --head <operator-login>:<branch> \
+  --title "<title>" --body-file <body.md>
+```
+
+Write the PR body to a file outside the repo (e.g. in a temp directory), so it
+can't be committed by accident. It starts with the AI disclosure line.

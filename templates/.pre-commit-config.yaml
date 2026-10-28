@@ -11,6 +11,7 @@ repos:
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: check-symlinks
+      - id: check-yaml
       - id: end-of-file-fixer
       - id: mixed-line-ending
       - id: trailing-whitespace
@@ -21,7 +22,7 @@ repos:
     rev: v2.4.3
     hooks:
       - id: codespell
-        args: ["-I", "codespell.txt"]
+        args: ["-I", "codespell.txt"] # the file must exist, even if empty
 
   # Only if the lesson has Python code blocks in Markdown:
   # - repo: https://github.com/adamchainz/blacken-docs

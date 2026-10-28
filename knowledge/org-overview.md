@@ -37,11 +37,11 @@ or from `git log`/`gh pr list --state merged` before asking for a review.
 
 | Kind | Examples | Notes |
 |---|---|---|
-| Lesson webpage | `hsf-training-matplotlib`, `hsf-training-scikit-hep-webpage`, `array-oriented-programming` | The rendered site is the deliverable. See [`platforms/`](platforms/) for how each stack works. |
+| Lesson | `hsf-training-matplotlib`, `hsf-training-scikit-hep-webpage`, `array-oriented-programming`, `cpluspluscourse` | Usually the rendered site is the deliverable (`cpluspluscourse` is slides and exercises). See [`platforms/`](platforms/) for how each stack works. |
 | Companion repo | `hsf-training-cms-analysis` (for `-cms-analysis-webpage`), `hsf_matplotlib_notebooks` (for `-matplotlib`) | Code or notebooks that learners clone during a lesson. Changes must stay in sync with the lesson text. |
 | Infrastructure | `.github`, `hsf-training-theme`, `cookiecutter-jupyter-book`, `training-center`, this repo | Changes here affect many lessons at once. |
-| Fork | `git-novice` (from `mambelli/git-novice`), `learner-certificates` (from `carpentries/learner-certificates`) | Maintained, but prefer syncing with upstream over diverging. Don't "standardize" files that upstream owns. |
-| Other | `participation-analysis`, `PyHEP-resources`, `python-lesson`, `cpluspluscourse` | Check each repo's README. |
+| Fork | `git-novice` (from `mambelli/git-novice`, itself from `swcarpentry/git-novice`), `learner-certificates` (from `carpentries/learner-certificates`) | Maintained, but prefer syncing with upstream over diverging. Don't "standardize" files that upstream owns. |
+| Other | `participation-analysis`, `PyHEP-resources`, `python-lesson` | Check each repo's README. |
 | Archived | `maintenance`, `carpentry-cookiecutter`, `hsf-training-uproot-webpage`, ... | Read-only. Don't open issues or PRs. They may still be useful as reference. |
 
 The curated inventory is [`repos.toml`](repos.toml): kind, platform, default

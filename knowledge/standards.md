@@ -19,8 +19,9 @@ Scope depends on the repo's `kind` in [`repos.toml`](repos.toml):
   else should be changed upstream first.
 - **Archived** repos are never changed.
 
-Deliberate deviations are fine. Record them in the repo's `notes` in
-`repos.toml` so audits and agents don't keep "fixing" them.
+Deliberate deviations are fine. Record them in `repos.toml` so audits and
+agents don't keep "fixing" them: add the check id to the repo's
+`ignore_checks` (the audit then skips it) and explain why in `notes`.
 
 ## 1. Licensing
 
@@ -91,7 +92,10 @@ expected, and the audit only flags missing or outdated parts.
   - They must mention `@hsf-training/training-conveners`, never individual
     people. `bots-individual-mentions`
 - **Required: no "CENTRALLY MAINTAINED FILE" headers.** `legacy-header` These
-  point to the archived maintenance repo. Remove them when syncing.
+  point to the archived maintenance repo. Remove them when syncing. The audit
+  also checks copies at any depth, e.g. the shared files inside
+  `cookiecutter-jupyter-book`'s template directory, which every new module
+  inherits.
 
 ## 4. Platform-specific (lessons)
 
@@ -115,6 +119,9 @@ See [`platforms/`](platforms/README.md) for details.
 
 - **Required: pin `jupyter-book<2`** (or migrate to JB2). An unpinned
   install gets JB2, which can't build a JB1 book. `build-tool-unpinned`
+  The pin belongs in the environment files (`environment.yml`,
+  `requirements.txt`), not only in CI. Otherwise local builds that follow the
+  README get JB2.
 
 **All lessons**
 
@@ -131,11 +138,19 @@ See [`platforms/`](platforms/README.md) for details.
 - **Required: the latest run of each workflow on the default branch
   succeeds.** `ci-failing`
 - **Required: the Pages site builds.** `pages-errored`
+- **Required: one way of deploying.** `pages-source-mismatch` If a workflow
+  deploys with `actions/deploy-pages`, the Pages source must be "GitHub
+  Actions". Otherwise a branch build runs as well, and the two deploys race.
+  Switching the source is an admin action.
+- **Required: Actions runs where there are workflows.** `actions-not-running`
+  Workflow files that GitHub never registered usually mean Actions is
+  disabled for the repo, which is common for forks. Enabling it is an admin
+  decision.
 - **Recommended: no workflows disabled for inactivity.** `workflow-disabled`
   - GitHub disables scheduled workflows after 60 days without activity in
     the repo.
-  - Re-enable a workflow with `gh workflow enable` only if its builds still
-    pass. Otherwise fix the build first.
+  - Re-enable a workflow (`gh workflow enable`, after the operator approves)
+    only if its builds still pass. Otherwise fix the build first.
 
 ## 6. Settings and hygiene
 

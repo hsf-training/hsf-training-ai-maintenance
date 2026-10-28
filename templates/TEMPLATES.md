@@ -9,6 +9,7 @@ in every `<PLACEHOLDER>`.
 | File | Use |
 |---|---|
 | `.pre-commit-config.yaml` | Baseline hooks (required). |
+| `codespell.txt` | Ignore-list for codespell, one word per line. Empty in the template, but it must exist because the pre-commit config passes it with `-I`. |
 | `.github/dependabot.yml` | GitHub Actions updates, plus ecosystems the repo uses. |
 | `.github/stale.yml`, `.github/config.yml` | Stale and welcome bots, which mention `@hsf-training/training-conveners`. |
 | `.github/workflows/check-links.yml` | Link checking with lychee (recommended for lessons). |

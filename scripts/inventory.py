@@ -18,7 +18,7 @@ from typing import Any
 
 from _common import INVENTORY, ORG, fetch_file, gh_api, gh_graphql, load_inventory, repo_tree, toml_value
 
-CURATED = ("kind", "companion_of", "notes")
+CURATED = ("kind", "companion_of", "notes", "ignore_checks")
 DERIVED = ("archived", "fork_of", "default_branch", "platform", "pages", "site", "training_center", "description")
 KINDS = ("lesson", "companion", "infra", "fork", "other")
 
@@ -31,6 +31,8 @@ HEADER = f"""\
 #   kind          one of: {", ".join(KINDS)}
 #   companion_of  for companion repos, the lesson repo they belong to
 #   notes         anything an agent should know before touching the repo
+#   ignore_checks audit check ids that don't apply to this repo on purpose
+#                 (explain why in notes)
 #
 # Derived fields, overwritten by the script:
 #   archived, fork_of, default_branch, description
@@ -44,7 +46,7 @@ HEADER = f"""\
 REPOS_QUERY = """
 query($org: String!, $cursor: String) {
   organization(login: $org) {
-    repositories(first: 100, after: $cursor, orderBy: {field: NAME, direction: ASC}) {
+    repositories(first: 100, after: $cursor, privacy: PUBLIC, orderBy: {field: NAME, direction: ASC}) {
       pageInfo { hasNextPage endCursor }
       nodes {
         name isArchived isFork description
@@ -141,7 +143,7 @@ def derive(node: dict[str, Any]) -> dict[str, Any]:
     }
     if node["isArchived"] or not branch:
         return entry
-    entry["platform"] = detect_platform(repo_tree(name, branch))
+    entry["platform"] = detect_platform(list(repo_tree(name, branch)))
     pages = gh_api(f"repos/{ORG}/{name}/pages")
     if pages:
         if pages.get("build_type") == "legacy":
@@ -201,7 +203,10 @@ def main() -> None:
     print(f"{len(active)} active and {len(entries) - len(active)} archived repos in {ORG}.")
     gone = sorted(set(old) - {e["name"] for e in entries})
     if gone:
-        print("\nNo longer in the org (removed from inventory):", ", ".join(gone))
+        print("\nNo longer in the org (removed from inventory). If one was renamed, copy its curated fields to the new name:")
+        for name in gone:
+            curated = {k: old[name][k] for k in CURATED if old[name].get(k)}
+            print(f"  {name}: {curated}")
     uncurated = [e["name"] for e in active if e["kind"] not in KINDS]
     if uncurated:
         print("\nNeed a curated `kind`:", ", ".join(uncurated))

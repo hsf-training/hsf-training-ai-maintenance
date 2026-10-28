@@ -6,6 +6,8 @@
 #   kind          one of: lesson, companion, infra, fork, other
 #   companion_of  for companion repos, the lesson repo they belong to
 #   notes         anything an agent should know before touching the repo
+#   ignore_checks audit check ids that don't apply to this repo on purpose
+#                 (explain why in notes)
 #
 # Derived fields, overwritten by the script:
 #   archived, fork_of, default_branch, description
@@ -96,7 +98,7 @@ description = "Introduction to deep learning for particle physicists"
 [[repo]]
 name = "git-novice"
 kind = "fork"
-notes = "Carpentries Workbench lesson. Workflows and Workbench files are owned upstream, so sync from upstream rather than editing them."
+notes = "Carpentries Workbench lesson. Forked from mambelli/git-novice, which is itself based on swcarpentry/git-novice. Check both before syncing. Workflows and Workbench files are owned upstream, so sync from upstream rather than editing them. GitHub Actions has never run on this fork."
 archived = false
 fork_of = "mambelli/git-novice"
 default_branch = "main"
@@ -331,7 +333,8 @@ training_center = ["ssh"]
 [[repo]]
 name = "hsf-training-theme"
 kind = "infra"
-notes = "Remote Jekyll theme used by the Jekyll lessons. Changes reach a lesson on its next Pages build."
+notes = "Remote Jekyll theme used by the Jekyll lessons, derived from the Carpentries theme, so its Carpentries license and attribution are correct. Changes reach a lesson on its next Pages build."
+ignore_checks = ["license-carpentries"]
 archived = false
 default_branch = "main"
 platform = "none"

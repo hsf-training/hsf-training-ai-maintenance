@@ -15,8 +15,8 @@ A campaign is one logical change applied to many repos. The other skills
   the issue that motivates it.
 - **Which repos.** Start from `python3 scripts/audit.py --json ...` findings
   or from `knowledge/repos.toml` (`kind`, `platform`). Exclude archived repos,
-  forks (unless the change is fork-safe), and repos whose `notes` record a
-  deliberate deviation.
+  forks (unless the change is fork-safe), and repos that record a deliberate
+  deviation (`ignore_checks` and `notes`).
 - A **branch name** (`<type>/<description>`), a **PR title** (Conventional
   Commits style) and a **PR body template**, all shared by every repo. The body
   explains the why, says how it was verified, and links the tracking issue.
@@ -44,13 +44,10 @@ pick the campaign up from this issue.
    - `pre-commit run -a` (or `prek -a`),
    - build the site (`build-and-preview` skill),
    - review `git diff`.
-4. Show the diff and verification results to the operator. On approval,
-   commit with the `Assisted-by:` trailer, push, and open the PR:
-
-   ```bash
-   gh pr create -R hsf-training/<repo> --base <default-branch> --head <branch> \
-     --title "<title>" --body-file <body.md>
-   ```
+4. Show the diff and verification results to the operator. After approval,
+   commit with the `Assisted-by:` trailer, then push and open the PR as
+   described in [Pushing and opening PRs](../../knowledge/contribution-policy.md#pushing-and-opening-prs) (it covers both operators with write access and
+   operators who need a fork).
 
 5. Add the PR link to the tracking issue. **Wait for the pilot PR to be
    reviewed or merged** before rolling out, and fold any feedback into the

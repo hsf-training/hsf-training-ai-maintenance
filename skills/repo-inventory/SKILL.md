@@ -35,6 +35,12 @@ from. Some fields are **derived** from GitHub and some are **curated** by hand
    - `notes`: only durable facts an agent needs before touching the repo, such
      as "Spanish translation of X" or "workflows owned upstream". Don't put
      audit findings here.
+   - `ignore_checks`: audit check ids that deliberately don't apply (e.g.
+     `license-carpentries` for the theme, which really is Carpentries-derived).
+     Explain why in `notes`.
+   - **Renamed repos** show up as one entry "no longer in the org" (the script
+     prints its curated fields) plus one new uncurated entry. Copy the curated
+     fields over.
    - If `platform` is wrong, fix `detect_platform()` in `scripts/inventory.py`
      instead of editing the field, since derived fields get overwritten.
 
@@ -46,5 +52,5 @@ from. Some fields are **derived** from GitHub and some are **curated** by hand
    Don't edit `training-center` yourself as part of this skill. Fixing those is
    a separate change in that repo.
 
-5. If the inventory changed, commit it on a branch of this repo and open a PR,
-   following [the contribution policy](../../knowledge/contribution-policy.md).
+5. If the inventory changed, commit it on a branch of this repo. After the
+   operator approves, push and open a PR ([Pushing and opening PRs](../../knowledge/contribution-policy.md#pushing-and-opening-prs)).

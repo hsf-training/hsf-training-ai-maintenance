@@ -43,7 +43,8 @@ description: Update the software versions an hsf-training lesson depends on (env
    that are green can be recommended for merging. Say why if one shouldn't be
    merged.
 
-6. Open one PR. Its body includes:
+6. Show the operator the diff. After approval, open one PR ([Pushing and opening PRs](../../knowledge/contribution-policy.md#pushing-and-opening-prs)). Its body
+   includes:
    - a table of old → new versions,
    - what broke and how it was fixed,
    - how it was verified (build command, notebooks executed).

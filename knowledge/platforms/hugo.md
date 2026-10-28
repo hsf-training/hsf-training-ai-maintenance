@@ -49,3 +49,9 @@ hugo            # build into public/
   Review them like dependency bumps.
 - The site is versioned, and the build fetches all branches and tags. Changes
   to the build scripts can affect old versions of the site too.
+- *(as of 2026-10-28)* The Pages source is still "Deploy from a branch"
+  (`gh-pages`, `build_type: legacy`), while `pages.yml` also deploys with
+  `actions/deploy-pages`. Every push therefore triggers two deploys: a Jekyll
+  build of the Hugo sources, and the real Hugo build. Whichever finishes last
+  is served. The fix is to switch the Pages source to "GitHub Actions" in the
+  repo settings (an admin action, audit check `pages-source-mismatch`).

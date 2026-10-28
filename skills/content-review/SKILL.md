@@ -66,6 +66,6 @@ it is reported.
      error output). Mark priority (high: broken or wrong, medium: outdated,
      low: nice to have).
 
-6. Show the operator the PR diff and the issue text before anything is
-   pushed or posted. Both carry the AI disclosure from the contribution
-   policy.
+6. Show the operator the PR diff and the issue text. Push and post only after
+   approval ([Pushing and opening PRs](../../knowledge/contribution-policy.md#pushing-and-opening-prs); issues with `gh issue create -R hsf-training/<repo>`).
+   Both carry the AI disclosure from the contribution policy.

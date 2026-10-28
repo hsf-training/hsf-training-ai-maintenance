@@ -65,14 +65,14 @@ def fetch_file(repo: str, path: str, ref: str | None = None) -> str | None:
     return base64.b64decode(data["content"]).decode("utf-8", errors="replace")
 
 
-def repo_tree(repo: str, ref: str) -> list[str]:
-    """Return all file and directory paths in ORG/repo at ref."""
+def repo_tree(repo: str, ref: str) -> dict[str, str]:
+    """Map every path in ORG/repo at ref to its type ("blob" or "tree")."""
     data = gh_api(f"repos/{ORG}/{repo}/git/trees/{ref}?recursive=1")
     if not data:
-        return []
+        return {}
     if data.get("truncated"):
         print(f"warning: tree of {repo} is truncated", file=sys.stderr)
-    return [entry["path"] for entry in data.get("tree", [])]
+    return {entry["path"]: entry["type"] for entry in data.get("tree", [])}
 
 
 def load_inventory() -> list[dict[str, Any]]:

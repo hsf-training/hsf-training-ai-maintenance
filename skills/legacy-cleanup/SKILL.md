@@ -18,7 +18,8 @@ before, stop and report that instead.
 - Delete `.github/ISSUE_TEMPLATE.md`, `.github/PULL_REQUEST_TEMPLATE.md`,
   `.github/FUNDING.yml` (and root-level copies) **unless** they differ
   meaningfully from the org's `.github` repo. Compare first. If they're
-  deliberately different, record that in `repos.toml` notes instead.
+  deliberately different, add `org-file-duplicate` to the repo's
+  `ignore_checks` in `repos.toml` and explain why in `notes`.
 - Delete `.travis.yml`.
 - Duplicate `CONDUCT.md` + `CODE_OF_CONDUCT.md`: keep `CODE_OF_CONDUCT.md`
   (Jekyll lessons **must** keep it), delete `CONDUCT.md`, and fix any links to
@@ -53,8 +54,8 @@ Open the PR as a draft, with screenshots or a list of the pages checked.
 
 ## Carpentries Makefile (`carpentries-makefile`)
 
-- Delete the `Makefile` if it's the upstream Carpentries one (it starts with
-  `## Commands for both workshop and lesson websites`).
+- Delete the `Makefile` if it's the upstream Carpentries one. Its first lines
+  contain `## Commands for both workshop and lesson websites`.
 - Make sure the README documents local preview with `bundle exec jekyll serve`
   (see the Jekyll platform doc). Update `_config.yml` `exclude:` if it lists
   `Makefile`.

@@ -57,5 +57,8 @@ For branch-built (legacy) Jekyll sites, e.g. after a change to
 gh api -X POST repos/hsf-training/<repo>/pages/builds
 ```
 
-For workflow-deployed sites, re-run the deploy workflow instead:
-`gh workflow run <workflow> -R hsf-training/<repo>`.
+For workflow-deployed sites, re-run the deploy workflow instead (also after
+confirmation). `gh workflow run <workflow> -R hsf-training/<repo>` only works
+if the workflow has a `workflow_dispatch` trigger and isn't disabled.
+Otherwise re-run its latest run with
+`gh run rerun <run-id> -R hsf-training/<repo>`.

@@ -49,5 +49,6 @@ description: Find the workshops, schools and training events where an hsf-traini
    platform's markup (`index.md` for Jekyll, the landing page in the TOC for
    Jupyter Book). Build it (`build-and-preview`).
 
-5. Open one PR per lesson with the evidence list in the PR body, so
-   maintainers can check it and add events the sources missed.
+5. Show the operator the diff and the evidence. After approval, open one PR
+   per lesson ([Pushing and opening PRs](../../knowledge/contribution-policy.md#pushing-and-opening-prs)) with the evidence list in the PR body, so maintainers
+   can check it and add events the sources missed.

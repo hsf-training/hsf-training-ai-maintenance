@@ -12,11 +12,11 @@ human, and drafts the next step.
 
 ```bash
 # Open PRs, oldest first
-gh search prs --owner hsf-training --state open --archived=false --sort created --order asc --limit 100 \
+gh search prs --owner hsf-training --state open --archived=false --sort created --order asc --limit 1000 \
   --json repository,number,title,author,createdAt,updatedAt,labels,isDraft
 
 # Open issues, recently active first
-gh search issues --owner hsf-training --state open --archived=false --sort updated --limit 100 \
+gh search issues --owner hsf-training --state open --archived=false --sort updated --limit 1000 \
   --json repository,number,title,author,createdAt,updatedAt,labels,commentsCount
 
 # Threads without any comments. The welcome bot's comment counts as one, so also

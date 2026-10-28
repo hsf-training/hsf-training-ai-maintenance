@@ -21,5 +21,4 @@ repos:
     rev: "v2.4.3"
     hooks:
       - id: codespell
-        args: ["-I", "codespell.txt"]
         files: '.*\.md'

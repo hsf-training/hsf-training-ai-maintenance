@@ -3,7 +3,9 @@ __pycache__/
 *.py[cod]
 .venv/
 
-# Local scratch
+# Local scratch, e.g. audit output
+audit.json
+audit.md
 .env
 *.log
 

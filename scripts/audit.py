@@ -43,6 +43,8 @@ ORG_DEFAULT_FILES = (
 )
 LICENSE_RE = re.compile(r"^(LICEN[CS]E|COPYING)([-.][\w.-]+)?$", re.IGNORECASE)
 TRACKED_HOOKS = ("pre-commit/pre-commit-hooks", "codespell-project/codespell")
+# Branches the Carpentries Workbench (sandpaper) creates and uses itself.
+SANDPAPER_BRANCHES = re.compile(r"^(md-outputs.*|legacy/.*)$")
 
 REPO_QUERY = """
 query($owner: String!, $name: String!) {
@@ -51,8 +53,9 @@ query($owner: String!, $name: String!) {
     refs(refPrefix: "refs/heads/", first: 100) {
       nodes {
         name
-        target { ... on Commit { committedDate } }
-        associatedPullRequests(first: 1, states: [MERGED]) { totalCount }
+        target { ... on Commit { committedDate oid } }
+        openPRs: associatedPullRequests(states: [OPEN]) { totalCount }
+        mergedPRs: associatedPullRequests(first: 20, states: [MERGED]) { nodes { headRefOid } }
       }
     }
     pullRequests(states: OPEN, first: 100) {
@@ -76,6 +79,7 @@ class RepoReport:
     kind: str
     platform: str
     findings: list[Finding] = field(default_factory=list)
+    ignored: list[str] = field(default_factory=list)
     error: str = ""
 
     def add(self, check: str, severity: str, message: str) -> None:
@@ -112,7 +116,8 @@ def jupyter_book_pinned_below_2(texts: list[str]) -> bool | None:
     ]
     if not specs:
         return None
-    return any(re.search(r"<\s*2(\.0)*\b|==\s*[01]\.|~=\s*[01]\.|=\s*[01]\.", s) for s in specs)
+    # "<2", "<2.0", "==1.x", "~=1.x", or a conda-style "=1.x" pin (but not ">=0.15").
+    return any(re.search(r"<\s*2(\.0)*\b|==\s*[01]\.|~=\s*[01]\.|(?<![<>!~=])=\s*[01]\.", s) for s in specs)
 
 
 def mentions(text: str) -> set[str]:
@@ -129,6 +134,9 @@ def audit_repo(entry: dict[str, Any], hook_versions: dict[str, str]) -> RepoRepo
         _audit(report, entry, hook_versions)
     except GhError as exc:
         report.error = str(exc)
+    ignore = set(entry.get("ignore_checks", []))
+    report.ignored = sorted({f.check for f in report.findings if f.check in ignore})
+    report.findings = [f for f in report.findings if f.check not in ignore]
     return report
 
 
@@ -142,7 +150,9 @@ def _audit(report: RepoReport, entry: dict[str, Any], hook_versions: dict[str, s
     if kind == "uncurated":
         report.add("inventory-uncurated", "info", "No curated `kind` in knowledge/repos.toml; checks assume a non-lesson repo.")
 
-    paths = repo_tree(name, branch)
+    tree = repo_tree(name, branch)
+    paths = list(tree)
+    blobs = [p for p, kind_ in tree.items() if kind_ == "blob"]
     pathset = set(paths)
     root_files = {p for p in paths if "/" not in p}
     meta = gh_graphql(REPO_QUERY, owner=ORG, name=name)["repository"]
@@ -156,6 +166,12 @@ def _audit(report: RepoReport, entry: dict[str, Any], hook_versions: dict[str, s
     dependabot = text(".github/dependabot.yml") or text(".github/dependabot.yaml")
     stale_cfg = text(".github/stale.yml")
     welcome_cfg = text(".github/config.yml")
+    # Shared files at any depth, e.g. inside a cookiecutter template directory.
+    shared = {
+        p: text(p)
+        for p in blobs
+        if p.endswith((".pre-commit-config.yaml", ".github/dependabot.yml", ".github/stale.yml", ".github/config.yml"))
+    }
     readme = next((p for p in root_files if p.lower() == "readme.md"), None)
 
     # --- Licensing and community files -------------------------------------
@@ -179,8 +195,9 @@ def _audit(report: RepoReport, entry: dict[str, Any], hook_versions: dict[str, s
             report.add("conduct-duplicate", "low", "Both CONDUCT.md and CODE_OF_CONDUCT.md exist.")
         if ".travis.yml" in pathset:
             report.add("travis", "low", "Leftover .travis.yml (Travis CI is no longer used).")
-        if any("CENTRALLY MAINTAINED FILE" in t for t in (precommit, dependabot, stale_cfg, welcome_cfg)):
-            report.add("legacy-header", "low", "Shared files still carry the old CENTRALLY MAINTAINED FILE header.")
+        headers = sorted(p for p, t in shared.items() if "CENTRALLY MAINTAINED FILE" in t)
+        if headers:
+            report.add("legacy-header", "low", f"Old CENTRALLY MAINTAINED FILE header in {', '.join(headers)}.")
 
     # --- Jekyll specifics ----------------------------------------------------
     if is_jekyll:
@@ -194,7 +211,7 @@ def _audit(report: RepoReport, entry: dict[str, Any], hook_versions: dict[str, s
         if "Commands for both workshop and lesson websites" in text("Makefile"):
             report.add("carpentries-makefile", "low", "Carpentries Makefile (depends on removed bin/ scripts).")
         if "_episodes_rmd" in pathset and not any(
-            p.startswith("_episodes_rmd/") and not p.endswith(".gitkeep") for p in paths
+            p.startswith("_episodes_rmd/") and not p.endswith(".gitkeep") for p in blobs
         ):
             report.add("empty-episodes-rmd", "low", "Empty _episodes_rmd/ directory.")
         if "<USERNAME>/<PROJECT>" in config:
@@ -220,9 +237,11 @@ def _audit(report: RepoReport, entry: dict[str, Any], hook_versions: dict[str, s
         missing_bots = [f for f, t in ((".github/stale.yml", stale_cfg), (".github/config.yml", welcome_cfg)) if not t]
         if missing_bots and name != ".github":
             report.add("bots-missing", "low", f"Missing bot config: {', '.join(missing_bots)}.")
-        people = sorted(m for m in mentions(stale_cfg + welcome_cfg) if f"@{m}" != TEAM)
+        bot_files = {p: t for p, t in shared.items() if p.endswith((".github/stale.yml", ".github/config.yml"))}
+        people = sorted({m for t in bot_files.values() for m in mentions(t) if f"@{m}" != TEAM})
         if people:
-            report.add("bots-individual-mentions", "medium", f"Bot messages mention individuals ({', '.join('@' + p for p in people)}) instead of {TEAM}.")
+            where = ", ".join(sorted(p for p, t in bot_files.items() if any(f"@{m}" in t for m in people)))
+            report.add("bots-individual-mentions", "medium", f"Bot messages in {where} mention individuals ({', '.join('@' + p for p in people)}) instead of {TEAM}.")
 
     # --- Build ---------------------------------------------------------------
     if platform == "jupyter-book-1":
@@ -231,13 +250,19 @@ def _audit(report: RepoReport, entry: dict[str, Any], hook_versions: dict[str, s
             for p in paths
             if PurePosixPath(p).name in ("requirements.txt", "environment.yml", "environment.yaml") and p.count("/") <= 1
         ]
-        if jupyter_book_pinned_below_2(env_texts + list(workflow_texts.values())) is False:
+        env_pinned = jupyter_book_pinned_below_2(env_texts)
+        ci_pinned = jupyter_book_pinned_below_2(list(workflow_texts.values()))
+        if env_pinned is False and ci_pinned:
+            report.add("build-tool-unpinned", "medium", "CI caps jupyter-book below 2, but the environment files don't, so local builds get JB2, which can't build this JB1 book.")
+        elif env_pinned is False or (env_pinned is None and ci_pinned is False):
             report.add("build-tool-unpinned", "high", "Jupyter Book 1 project, but jupyter-book is not capped below 2 (a fresh install gets JB2, which can't build it).")
 
     workflows = gh_api(f"repos/{ORG}/{name}/actions/workflows?per_page=100") or {}
     disabled = [w["name"] for w in workflows.get("workflows", []) if w.get("state") == "disabled_inactivity"]
     if disabled:
         report.add("workflow-disabled", "medium", f"Workflows disabled for inactivity: {', '.join(disabled)}.")
+    if workflow_paths and not workflows.get("total_count"):
+        report.add("actions-not-running", "medium", f"{len(workflow_paths)} workflow file(s), but GitHub has no workflows registered: Actions is probably disabled (common for forks).")
 
     runs = (gh_api(f"repos/{ORG}/{name}/actions/runs?branch={branch}&per_page=100&exclude_pull_requests=true") or {}).get("workflow_runs", [])
     latest_runs: dict[str, dict[str, Any]] = {}
@@ -262,6 +287,8 @@ def _audit(report: RepoReport, entry: dict[str, Any], hook_versions: dict[str, s
     pages = gh_api(f"repos/{ORG}/{name}/pages")
     if pages and pages.get("status") == "errored":
         report.add("pages-errored", "high", "GitHub Pages reports status `errored`.")
+    if pages and pages.get("build_type") == "legacy" and any("actions/deploy-pages" in t for t in workflow_texts.values()):
+        report.add("pages-source-mismatch", "medium", "Pages builds from a branch, but a workflow also deploys with actions/deploy-pages: two deploys race on every push. Switch the Pages source to GitHub Actions.")
 
     if not is_fork:
         all_workflows = "\n".join(workflow_texts.values())
@@ -282,10 +309,14 @@ def _audit(report: RepoReport, entry: dict[str, Any], hook_versions: dict[str, s
     pages_branch = entry.get("pages", "").removeprefix("legacy:") if entry.get("pages", "").startswith("legacy:") else ""
     stale = []
     for ref in meta["refs"]["nodes"]:
-        if ref["name"] in (branch, pages_branch):
+        if ref["name"] in (branch, pages_branch) or ref["openPRs"]["totalCount"]:
+            continue  # deleting the head of an open PR would close it
+        if platform == "sandpaper" and SANDPAPER_BRANCHES.match(ref["name"]):
             continue
-        date = (ref.get("target") or {}).get("committedDate")
-        merged = ref["associatedPullRequests"]["totalCount"] > 0
+        target = ref.get("target") or {}
+        date = target.get("committedDate")
+        # Merged only if the branch tip is what got merged, not just "a PR from this name was merged".
+        merged = target.get("oid") in {pr["headRefOid"] for pr in ref["mergedPRs"]["nodes"]}
         old = date and NOW - datetime.fromisoformat(date.replace("Z", "+00:00")) > STALE_BRANCH_AGE
         if merged or old:
             stale.append(f"{ref['name']} ({'merged' if merged else 'last commit ' + date[:10]})")
@@ -326,11 +357,13 @@ def markdown(reports: list[RepoReport], org: list[Finding]) -> str:
     if org:
         lines += ["", "## Organization", ""] + [f"- **{f.severity}** `{f.check}`: {f.message}" for f in org]
     for r in sorted(reports, key=lambda r: r.name.lower()):
-        if not r.findings and not r.error:
+        if not r.findings and not r.error and not r.ignored:
             continue
         lines += ["", f"## {r.name}", ""]
         if r.error:
             lines.append(f"- **error**: {r.error}")
+        if r.ignored:
+            lines.append(f"- ignored via `ignore_checks` in repos.toml: {', '.join(r.ignored)}")
         order = {s: i for i, s in enumerate(SEVERITIES)}
         lines += [f"- **{f.severity}** `{f.check}`: {f.message}" for f in sorted(r.findings, key=lambda f: order[f.severity])]
     return "\n".join(lines) + "\n"

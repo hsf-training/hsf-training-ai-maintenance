@@ -10,7 +10,7 @@ with Markdown/MyST pages and notebooks, deployed to GitHub Pages by a workflow.
 | `array-oriented-programming` | `array-oriented-programming/` | `environment.yml` (`jupyter-book<2`) | `jupyter-book build -W array-oriented-programming` |
 | `deep-learning-intro-for-hep` | `deep-learning-intro-for-hep/` | `environment.yml` (**unpinned** `jupyter-book`) | `jupyter-book build -W deep-learning-intro-for-hep` |
 | `hsf-training-unix-shell` | `hsf-training-unix-shell/` | `requirements.txt` (**unpinned**) + `bash_kernel` | run from `hsf-training-unix-shell/filesystem/Users/nelle` (see below) |
-| `hsf-training-ssh-webpage` | `ssh-tutorial/` | `environment.yml` + `pip install "jupyter-book < 2.0"` in CI | `jupyter book build ssh-tutorial` |
+| `hsf-training-ssh-webpage` | `ssh-tutorial/` | `environment.yml` (`jupyter-book>=0.15.0`, **not capped**) + `pip install "jupyter-book < 2.0"` in CI | `jupyter book build ssh-tutorial` |
 | `cookiecutter-jupyter-book` (template) | `book/` | `requirements.txt` (`jupyter-book==1.0.4`) | CI renders the template and runs `jupyter-book build -W --keep-going` on it |
 
 ## Layout

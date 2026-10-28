@@ -45,6 +45,10 @@ def prepare(entry: dict[str, Any], workspace: Path, branch: str | None) -> tuple
             return name, "fetch failed", ""
         status = "updated"
 
+    # Forks otherwise resolve to their external parent, so a bare `gh pr create`
+    # or `gh issue create` would target the wrong repo. Local git config only.
+    subprocess.run(["gh", "repo", "set-default", f"{ORG}/{name}"], cwd=path, capture_output=True)
+
     default = default or git(path, "symbolic-ref", "--short", "refs/remotes/origin/HEAD").stdout.strip().removeprefix("origin/")
     for args in (("switch", "--quiet", default), ("merge", "--ff-only", "--quiet", f"origin/{default}")):
         proc = git(path, *args)
@@ -56,7 +60,9 @@ def prepare(entry: dict[str, Any], workspace: Path, branch: str | None) -> tuple
             git(path, "switch", "--quiet", branch)
             status += f", existing branch {branch} (not reset)"
         else:
-            git(path, "switch", "--quiet", "-c", branch)
+            proc = git(path, "switch", "--quiet", "-c", branch)
+            if proc.returncode != 0:
+                return name, f"git switch -c failed: {proc.stderr.strip()}", default
     return name, status, git(path, "branch", "--show-current").stdout.strip()
 
 
@@ -71,6 +77,8 @@ def main() -> None:
     args = parser.parse_args()
 
     inventory = {e["name"]: e for e in load_inventory()}
+    if (args.kind or args.platform) and not args.all:
+        parser.error("--kind and --platform only work together with --all")
     if args.all:
         targets = [
             e
@@ -87,6 +95,8 @@ def main() -> None:
     else:
         parser.error("give repo names or --all")
 
+    if not targets:
+        sys.exit("No repos match.")
     args.dir.mkdir(parents=True, exist_ok=True)
     with ThreadPoolExecutor(max_workers=4) as pool:
         results = list(pool.map(lambda e: prepare(e, args.dir, args.branch), targets))

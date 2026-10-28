@@ -38,7 +38,10 @@ All changes to other repos are made in local clones under `../hsf-workspace/`
 
 ## Notes
 
-- Pushing uses the operator's permissions. If they can't push to the org repo,
-  `gh pr create` offers to push to a fork. Accept that instead of pushing
-  elsewhere.
+- The script sets each clone's `gh` default repo to `hsf-training/<repo>`.
+  Without that, `gh` in a fork's clone (e.g. `git-novice`) would target the
+  fork's upstream outside the org. Still pass `-R hsf-training/<repo>`
+  explicitly.
+- Pushing and opening PRs, including when the operator has no write access:
+  [Pushing and opening PRs](../../knowledge/contribution-policy.md#pushing-and-opening-prs).
 - Use `--dir` to put the workspace somewhere else. Tell the operator where.

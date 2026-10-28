@@ -27,7 +27,13 @@ The audit is **read-only**. It reports, and it never changes anything.
 
    Every check id maps to a rule in
    [`knowledge/standards.md`](../../knowledge/standards.md). Read the rule
-   before acting on a finding.
+   before acting on a finding. Checks listed in a repo's `ignore_checks` in
+   `repos.toml` are skipped, and the report says so.
+
+   `stale-branches` leaves out the default branch, the Pages source, branches
+   with an open PR, and Workbench branches. A branch counts as merged only if
+   its current tip is what got merged. Still review the list before deleting
+   anything (`repo-settings`).
 
 3. **Verify the high-severity findings** before reporting them. Look at the
    failing run's log (`gh run view <id> --log-failed -R hsf-training/<repo>`),
@@ -50,8 +56,8 @@ The audit is **read-only**. It reports, and it never changes anything.
    - Group the remaining findings into **campaigns**: the same fix across many
      repos, e.g. "28 repos still mention individuals in bot configs →
      `sync-shared-files`". Name the skill that handles each.
-   - Mention deliberate deviations recorded in `repos.toml` notes instead of
-     flagging them as problems.
+   - Mention checks skipped via `ignore_checks` (the report lists them), and
+     don't present them as problems.
 
 6. Only if the operator asks, post the report as a tracking issue in
    `hsf-training/hsf-training-ai-maintenance`. Start the body with the AI

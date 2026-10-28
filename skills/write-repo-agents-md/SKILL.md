@@ -36,5 +36,6 @@ exact build commands, content conventions, CI behavior and pitfalls.
 4. If the repo has a `CLAUDE.md`, make it contain only `@AGENTS.md`, or
    remove it. Don't keep two diverging instruction files.
 
-5. Open a PR. Mention that the file is for coding agents, and that
-   maintainers can edit it like any other doc.
+5. Show the operator the file. After approval, open a PR ([Pushing and opening PRs](../../knowledge/contribution-policy.md#pushing-and-opening-prs)). Mention
+   that the file is for coding agents, and that maintainers can edit it like
+   any other doc.

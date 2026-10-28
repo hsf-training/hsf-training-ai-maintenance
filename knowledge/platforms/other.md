@@ -28,18 +28,28 @@ Repos that don't fit the main lesson stacks. *(as of 2026-10-28)*
 
 ## Carpentries Workbench (sandpaper): `git-novice`
 
-- Fork of `mambelli/git-novice`, itself based on the Software Carpentry lesson.
-  It uses the Carpentries Workbench (`config.yaml`, `episodes/`, `learners/`,
+- Fork of `mambelli/git-novice`, which is a fork of `swcarpentry/git-novice`.
+  Both are active, so check both before syncing and ask the operator which one
+  to follow.
+- It uses the Carpentries Workbench (`config.yaml`, `episodes/`, `learners/`,
   `instructors/`, `profiles/`), built with the R package `sandpaper`.
 - The workflows (`sandpaper-main.yaml`, `pr-*.yaml`, `update-*.yaml`) are
   owned by upstream. Don't modify them. Sync from upstream instead.
+- *(as of 2026-10-28)* GitHub Actions has never run on this fork (no
+  registered workflows, no runs), so the published site is not rebuilt
+  automatically. Enabling Actions is an admin decision (audit check
+  `actions-not-running`).
+- The Workbench uses the branches `gh-pages`, `md-outputs` and
+  `md-outputs-PR-*`. They are not stale branches.
 - Local build: in R, `sandpaper::build_lesson()` or `sandpaper::serve()`.
 
 ## Astro site: `training-center`
 
 - The Training Center catalog website. `npm ci && npm run dev` (dev server at
   `http://localhost:4321/training-center/`), and `npm run build`. Deployed by
-  `build-and-deploy.yml`, with lychee link checking, to <https://hsf-training.org/>.
+  `build-and-deploy.yml`, with lychee link checking, to
+  <https://hsf-training.org/training-center/> (`base: "/training-center"` in
+  `astro.config.mjs`).
 - Content lives in `data/data.yaml` (all modules) and `data/curricula.yaml`
   (curated curriculum). Both are validated at build time.
 
