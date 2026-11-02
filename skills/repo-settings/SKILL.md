@@ -11,6 +11,10 @@ command and the before and after values first. Changing settings requires
 admin rights on the repo. If the operator lacks them, prepare the list for an
 org owner instead.
 
+**Never delete, transfer or rename a repo, or change its visibility.**
+Archiving needs a human's explicit approval for that one repo. See the
+[contribution policy](../../knowledge/contribution-policy.md#1-read-only-by-default).
+
 **Branch protection is out of scope.** It was decided (2026-10-28) not to
 require it, because there are too few maintainers. Don't add or remove
 protections.

@@ -14,6 +14,8 @@ operator reviews everything before it leaves their machine.
 1. [`knowledge/contribution-policy.md`](knowledge/contribution-policy.md):
    **mandatory** rules for any change you make in the org (read-only by default,
    confirm every outward-facing action, AI disclosure, verify before proposing).
+   **Never delete, transfer or rename a repository, and never archive one
+   without a human's explicit approval for that repo.**
 2. [`knowledge/org-overview.md`](knowledge/org-overview.md): what is in the org,
    infrastructure repos, bots, and common surprises (e.g. many lessons use
    `gh-pages` as the default branch).
@@ -30,6 +32,8 @@ operator reviews everything before it leaves their machine.
 
 - `gh auth status` must succeed. The operator's account determines what you can
   do. Most write actions need org membership, and repo settings need admin.
+  Operators can restrict the agent with a fine-grained token; see
+  [Limiting what the agent's credentials can do](knowledge/contribution-policy.md#limiting-what-the-agents-credentials-can-do).
 - Clone target repos **outside** this repo, e.g. into a sibling
   `../hsf-workspace/<repo>`, and work on a new branch based on the repo's
   default branch (`gh repo view hsf-training/<repo> --json defaultBranchRef`).

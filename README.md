@@ -49,6 +49,20 @@ anything visible to others, such as pushing, opening PRs or commenting. You are
 responsible for reviewing what it proposes. See the
 [contribution policy](knowledge/contribution-policy.md).
 
+> [!WARNING]
+> The agent can do anything your GitHub credentials allow. If you are an org
+> admin, that includes archiving, renaming and transferring repos. With the
+> `delete_repo` scope, it also includes deleting them. The agent is told never
+> to delete, transfer or rename a repo, and to archive one only with your
+> explicit approval, but instructions are not a guarantee. To limit what it can
+> do:
+>
+> - Check that `gh auth status` doesn't list `delete_repo`. If it does, remove
+>   it with `gh auth refresh --remove-scopes delete_repo`.
+> - Better, give the agent a fine-grained token without the "Administration"
+>   permission, set only in its environment (`GH_TOKEN=... claude`). See
+>   [Limiting what the agent's credentials can do](knowledge/contribution-policy.md#limiting-what-the-agents-credentials-can-do).
+
 ## Contributing
 
 Improvements to the knowledge base and skills are very welcome. If an agent got

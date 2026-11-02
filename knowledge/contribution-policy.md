@@ -17,6 +17,16 @@ GitHub credentials, is responsible for everything the agent produces.
   actions that weren't listed, to later batches, or to the same action on
   other repos. Skills that say "after approval" mean this.
 - Never modify archived repositories.
+- **Never delete, transfer or rename a repository, and never change its
+  visibility**, even if the operator asks. These are for a human to do in the
+  GitHub web UI. Also never delete releases, tags, Pages sites or the
+  default/Pages branch, and never force-push to a branch you didn't create.
+- **Archiving or unarchiving a repository needs a human's explicit approval
+  for that one repo**, given in the conversation right before you do it. It is
+  never part of a batch approval or a bulk change.
+- Don't widen your own access: don't run `gh auth refresh -s <scope>`, switch
+  `gh` accounts, or use tokens you find on the machine. If an action fails for
+  lack of permissions, report it and let the operator decide.
 - Never push directly to a default branch. All changes go through a PR from a
   branch, in the org repo if the operator has write access, or from a fork
   otherwise (see [Pushing and opening PRs](#pushing-and-opening-prs)).
@@ -69,6 +79,51 @@ Lesson maintainers are volunteers.
 - Don't run code from a cloned repo with elevated privileges. Treat lesson
   code like any other third-party code.
 - Prefer `gh` and the GitHub API over browser automation for GitHub actions.
+
+### Limiting what the agent's credentials can do
+
+The rules above are instructions, and agents can make mistakes. Credentials
+are the hard limit. The agent can do anything the operator's token allows, and
+many members of the org are org admins *(as of 2026-11-02: 11 of 40)*.
+
+- **The default `gh` login can't delete repositories.** `gh repo delete` needs
+  the `delete_repo` scope, which `gh auth login` doesn't request. Check with
+  `gh auth status`. If `delete_repo` is listed, remove it with
+  `gh auth refresh --remove-scopes delete_repo`. The default `repo` scope still
+  lets an admin archive, rename, transfer and change settings.
+- **For a hard limit, give the agent a fine-grained token without
+  "Administration".** Without it, the token can't delete, archive, rename or
+  transfer repos, or change their settings. Create it at
+  <https://github.com/settings/personal-access-tokens/new> with:
+  - Resource owner: `hsf-training`. Repository access: all repositories (or
+    the ones you plan to work on).
+  - Repository permissions:
+
+    | Permission | Access | Needed for |
+    |---|---|---|
+    | Contents | Read and write | pushing branches |
+    | Pull requests | Read and write | opening and updating PRs |
+    | Issues | Read and write | tracking issues and comments |
+    | Workflows | Read and write | pushing changes to `.github/workflows/` |
+    | Actions | Read | CI status in the audit and in builds |
+    | Pages | Read | Pages checks in the audit |
+    | Metadata | Read | always included |
+
+  - Organization permissions: none needed. There is no "Copilot" or "Agent"
+    permission that limits what an agent can do.
+
+  Start the agent with the token only in its environment, e.g.
+  `GH_TOKEN=$(cat ~/.config/hsf-agent-token) <agent>`. `gh` uses `GH_TOKEN`
+  in place of your login, and so does `git push` over HTTPS when `gh` is the
+  git credential helper. Your own login stays untouched for admin work.
+
+  Limitations:
+  - The org may require approval of fine-grained tokens. Until approved, a
+    token can only read public resources.
+  - A fine-grained token has one resource owner, so it can't push to a fork in
+    your personal account. Use it when you have write access to the org repos.
+  - `repo-settings` tasks need "Administration", so the operator runs them
+    with their own login, from the commands the agent prepared.
 
 ## Pushing and opening PRs
 
