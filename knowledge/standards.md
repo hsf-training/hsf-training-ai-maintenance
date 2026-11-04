@@ -78,6 +78,10 @@ expected, and the audit only flags missing or outdated parts.
   `precommit-missing`
   - Must include the `pre-commit-hooks` basics and `codespell` with
     repo-specific words in `codespell.txt`.
+  - Has a `ci:` block with the pre-commit.ci commit messages
+    (`chore(deps): update pre-commit hooks`, `style: pre-commit fixes`) and
+    `autoupdate_schedule: "monthly"`, as in the
+    [Scientific Python style guide](https://learn.scientific-python.org/development/guides/style/).
   - Hook versions are kept current by pre-commit.ci's monthly autoupdate.
     Outdated revs usually mean pre-commit.ci isn't enabled for the repo.
     `precommit-outdated`
