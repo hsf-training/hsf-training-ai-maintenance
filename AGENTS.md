@@ -26,8 +26,6 @@ operator reviews everything before it leaves their machine.
 4. [`knowledge/standards.md`](knowledge/standards.md): what a healthy repo looks
    like, and the [`templates/`](templates/TEMPLATES.md) for shared files.
 
-[`PLAN.md`](PLAN.md) describes the roadmap and the decisions behind it.
-
 ## Setup
 
 - `gh auth status` must succeed. The operator's account determines what you can
