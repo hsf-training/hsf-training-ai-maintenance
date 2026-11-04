@@ -21,3 +21,6 @@ jobs:
           # built HTML instead (build first, then point this at the output).
           args: --no-progress "./**/*.md"
           fail: true
+        env:
+          # Authenticated requests avoid GitHub rate limits.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

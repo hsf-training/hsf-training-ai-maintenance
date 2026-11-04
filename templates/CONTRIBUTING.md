@@ -34,4 +34,4 @@ conveners (`@hsf-training/training-conveners`) in your issue or pull request.
 [conduct]: https://github.com/hsf-training/.github/blob/main/CODE_OF_CONDUCT.md
 [issues]: https://github.com/hsf-training/<REPO>/issues
 [pre-commit]: https://pre-commit.com/
-[gfis]: https://github.com/issues?q=is%3Aissue+is%3Aopen+archived%3Afalse+label%3A%22good+first+issue%22+org%3Ahsf-training
+[gfis]: https://github.com/search?q=org%3Ahsf-training+label%3A%22good+first+issue%22+is%3Aissue+is%3Aopen+archived%3Afalse&type=issues
