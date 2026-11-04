@@ -2,10 +2,9 @@
 
 ## Goal
 
-Turn this repository from a standalone Python tool (Gemini API + GitHub token +
-custom CLI) into a **knowledge base and skill library** that any maintainer can
-point their own coding agent at (Claude Code, Codex, Gemini CLI, Copilot,
-Cursor, ...) to maintain the repositories of the
+Make this repository a **knowledge base and skill library** that any
+maintainer can point their own coding agent at (Claude Code, Codex, Gemini CLI,
+Copilot, Cursor, ...) to maintain the repositories of the
 [`hsf-training`](https://github.com/hsf-training) organization.
 
 The repository will contain:
@@ -18,12 +17,11 @@ The repository will contain:
   facts deterministically is cheaper and more reliable than letting the agent do
   it by hand.
 
-There will be no API keys, LLM client code, or bespoke CLI. The operator brings
-the agent and their own `gh` authentication. The agent does the fuzzy part
-(judgment, merging, writing), and a human reviews every change before it
+The operator brings the agent and their own `gh` authentication. The agent
+does the fuzzy part (judgment, merging, writing), and a human reviews every change before it
 leaves their machine.
 
-This replaces both the current Gemini-based agent in this repo and the archived
+This replaces the archived
 [`hsf-training/maintenance`](https://github.com/hsf-training/maintenance)
 scripts.
 
@@ -195,7 +193,7 @@ which old script or issue it replaces or resolves.
 
 | Skill | What it does |
 |---|---|
-| `content-review` | Successor of the Gemini agent. It reviews a lesson (or one episode) for outdated software versions and APIs, deprecated practices, broken or moved links, technical inaccuracies, and examples that could be better. Unlike the old tool, it **verifies** findings: it runs the code, checks PyPI/conda-forge/release notes, and follows links. It keeps the old constraints (no restructuring, preserve difficulty and learning objectives). Output: clear-cut fixes become a PR, and judgment calls become one issue per repo with a grouped checklist. The six analysis categories and the difficulty check from `hsf_training_agent/src/ai/prompt_templates.py` (removed in phase 1, see `git show fab2f86:hsf_training_agent/src/ai/prompt_templates.py`) carry over into this skill. |
+| `content-review` | Reviews a lesson (or one episode) for code that no longer runs, outdated software and APIs, deprecated practices, broken or moved links, wrong statements, and examples that could be better. It starts from evidence (a build that executes the code, a link check) and **verifies** every finding before reporting it. It doesn't restructure lessons or change their difficulty or learning objectives. Output: clear-cut fixes become a PR, and judgment calls become one issue per repo with a prioritized checklist. |
 | `update-dependencies` | Bumps pinned versions (`environment.yml`, `requirements.txt`, Docker images, setup instructions, `Gemfile`), re-executes notebooks and code snippets, builds the site, and reports what broke and why. |
 | `build-and-preview` | Builds any lesson locally per its platform doc so other skills (and humans) can check that a change renders. It also explains how to trigger a Pages rebuild (`gh api -X POST repos/hsf-training/<repo>/pages/builds`). *Replaces `trigger-jekyll-rebuilds/`.* |
 | `org-triage` | Lists open issues and PRs across the org: unanswered first-time contributors, PRs waiting for review, stale issues, failing scheduled CI. It drafts responses but doesn't post them, and it reports CI breakage. Complements the stale and welcome bots, which only ping. |
@@ -302,8 +300,6 @@ See [Decisions](#decisions). They get written into `standards.md` and
 
 ### Phase 1: scaffold and knowledge (done)
 
-- Remove the old tool: `hsf_training_agent/`, `examples/`, `requirements.txt`,
-  `setup.py`, `.env.example`.
 - Write `AGENTS.md`, the `CLAUDE.md` shim, a new `README.md`, and
   `knowledge/org-overview.md`, `contribution-policy.md` and `platforms/*`.
 - Add `LICENSE` (CC BY 4.0, for the docs) and `LICENSE-CODE` (BSD-3-Clause,
@@ -364,7 +360,7 @@ Start using the skills, and adjust them as real use shows what's missing.
 
 Optional later: package the skills as a Claude Code plugin / marketplace entry,
 or similar for other harnesses. Scheduled unattended runs are out of scope
-because they bring back API keys and remove the human reviewer.
+because they would need API keys and remove the human reviewer.
 
 ## Decisions
 

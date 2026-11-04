@@ -21,8 +21,7 @@ There are no API keys to configure and nothing to install. The repo contains:
   for the inventory, audits and the local workspace.
 
 It replaces the archived [`maintenance`](https://github.com/hsf-training/maintenance)
-scripts and an earlier Gemini-based tool that lived in this repo. See
-[`PLAN.md`](PLAN.md) for the roadmap.
+scripts. See [`PLAN.md`](PLAN.md) for the roadmap.
 
 ## Usage
 
